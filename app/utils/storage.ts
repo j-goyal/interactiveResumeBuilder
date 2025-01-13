@@ -1,6 +1,6 @@
-import { ResumeData } from '../types'
+import { ResumeData, Section } from '../types'
 
-const validateResumeData = (data: any): data is ResumeData => {
+const validateResumeData = (data: ResumeData): data is ResumeData => {
   return (
     typeof data.name === 'string' &&
     typeof data.title === 'string' &&
@@ -11,7 +11,7 @@ const validateResumeData = (data: any): data is ResumeData => {
     typeof data.linkedin === 'string' &&
     Array.isArray(data.sections) &&
     data.sections.every(
-      (section: any) =>
+      (section: Section) =>
         typeof section.id === 'string' &&
         typeof section.type === 'string' &&
         typeof section.title === 'string' &&
