@@ -25,7 +25,7 @@ export default function Header({
     try {
       await onSave();
       downloadResumeJSON(resumeData);
-      alert("Resume saved and downloaded successfully!");
+      alert("Resume saved as Json successfully!");
     } catch {
       alert("Please fix the validation errors before saving.");
     }
@@ -57,8 +57,8 @@ export default function Header({
         onLoad(data);
         saveResume(data);
         alert("Resume loaded successfully!");
-      } catch {
-        alert("Error loading resume. Please try again.");
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "Error loading resume. Please try again.");
       }
     }
   };
@@ -75,11 +75,14 @@ export default function Header({
             Save As Json
           </button>
           <label className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded w-full sm:w-auto text-center flex justify-center cursor-pointer">
-            Load
+            Load Json
             <input
               type="file"
               accept=".json"
-              onChange={handleLoad}
+              onChange={(event) => {
+                handleLoad(event);
+                event.target.value = '';
+              }}
               className="hidden"
             />
           </label>

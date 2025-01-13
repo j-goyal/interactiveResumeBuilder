@@ -1,5 +1,25 @@
 import { ResumeData } from '../types'
 
+const validateResumeData = (data: any): data is ResumeData => {
+  return (
+    typeof data.name === 'string' &&
+    typeof data.title === 'string' &&
+    typeof data.email === 'string' &&
+    typeof data.phone === 'string' &&
+    typeof data.location === 'string' &&
+    typeof data.github === 'string' &&
+    typeof data.linkedin === 'string' &&
+    Array.isArray(data.sections) &&
+    data.sections.every(
+      (section: any) =>
+        typeof section.id === 'string' &&
+        typeof section.type === 'string' &&
+        typeof section.title === 'string' &&
+        typeof section.content === 'string'
+    )
+  );
+};
+
 export const saveResume = (data: ResumeData) => {
   localStorage.setItem('resumeData', JSON.stringify(data))
 }
@@ -28,7 +48,11 @@ export const uploadResumeJSON = (file: File): Promise<ResumeData> => {
     reader.onload = (event) => {
       try {
         const data = JSON.parse(event.target?.result as string)
-        resolve(data)
+        if (validateResumeData(data)) {
+          resolve(data);
+        } else {
+          reject(new Error('Invalid resume data format'));
+        }
       } catch {
         reject(new Error('Invalid JSON file'))
       }

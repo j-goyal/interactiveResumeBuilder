@@ -10,13 +10,12 @@ export const exportToPDF = async (targetRef: RefObject<HTMLElement>, filename: s
 
   const element = targetRef.current;
 
-  // Use html2canvas to render the element to a canvas
   const canvas = await html2canvas(element, {
-    scale: 4, // Higher scale for better quality
-    useCORS: true, // Enable cross-origin resource sharing if images are used
+    scale: 4,
+    useCORS: true,
   });
 
-  const imgData = canvas.toDataURL('image/jpeg', 0.95); // Reduce the image quality (0.5 is 50% quality)
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
   const pdf = new jsPDF({
     orientation: 'portrait',
