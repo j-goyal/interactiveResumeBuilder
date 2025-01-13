@@ -29,7 +29,7 @@ export const uploadResumeJSON = (file: File): Promise<ResumeData> => {
       try {
         const data = JSON.parse(event.target?.result as string)
         resolve(data)
-      } catch (error) {
+      } catch {
         reject(new Error('Invalid JSON file'))
       }
     }

@@ -1,12 +1,16 @@
-import { Section } from '../types'
+import { Section } from "../types";
 
 interface SectionFormProps {
-  section: Section
-  onChange: (data: Partial<Section>) => void
-  onRemove: () => void
+  section: Section;
+  onChange: (data: Partial<Section>) => void;
+  onRemove: () => void;
 }
 
-export default function SectionForm({ section, onChange, onRemove }: SectionFormProps) {
+export default function SectionForm({
+  section,
+  onChange,
+  onRemove,
+}: SectionFormProps) {
   return (
     <div>
       <input
@@ -20,7 +24,7 @@ export default function SectionForm({ section, onChange, onRemove }: SectionForm
         value={section.content}
         onChange={(e) => onChange({ content: e.target.value })}
         className="w-full mb-2 p-2 border rounded"
-        placeholder="Section Content"
+        placeholder="Section Content (Use HTML Tags for writing in styles ie; <ul><li>Section Title</li></ul>)"
         rows={4}
       />
       <button
@@ -30,6 +34,5 @@ export default function SectionForm({ section, onChange, onRemove }: SectionForm
         Remove Section
       </button>
     </div>
-  )
+  );
 }
-

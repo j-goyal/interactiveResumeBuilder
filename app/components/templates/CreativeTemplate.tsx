@@ -9,7 +9,7 @@ export default function CreativeTemplate({ resumeData }: CreativeTemplateProps) 
   return (
     <div className="p-8 font-sans bg-gradient-to-br from-purple-100 to-pink-100">
       <header className="mb-8 text-center">
-        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+        <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
           {resumeData.name}
         </h1>
         <p className="text-2xl text-gray-700 mt-2">{resumeData.title}</p>

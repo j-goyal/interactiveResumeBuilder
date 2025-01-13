@@ -25,7 +25,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(
     }
 
     return (
-      <div className="w-3/4 bg-white p-8 overflow-y-auto">
+      <div className="w-full lg:w-2/3 bg-white p-8 overflow-y-auto">
         <div ref={ref} className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-8">
           {renderTemplate()}
         </div>
