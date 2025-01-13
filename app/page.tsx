@@ -1,5 +1,3 @@
-// page.tsx
-
 "use client";
 
 import { useState, useEffect, useCallback, useRef, Suspense } from "react";
@@ -14,6 +12,9 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { exportToPDF } from "./utils/pdfExport";
 import { useSearchParams } from "next/navigation";
 import { FormikProps, FormikValues } from "formik";
+import { toast, ToastContainer } from "react-toastify";
+import { TOAST_POSITION } from "./utils/constants";
+import "react-toastify/dist/ReactToastify.css";
 
 function ResumePage() {
   const searchParams = useSearchParams();
@@ -35,7 +36,10 @@ function ResumePage() {
           setHistory([resumeParsedData]);
         }
       } catch {
-        alert("Invalid resume data in URL. Loading default resume.");
+        toast.error("Invalid resume data in URL. Loading default resume.", {
+          position: TOAST_POSITION,
+          autoClose: 3000,
+        });
       }
     } else {
       const savedData = loadResume();
@@ -103,38 +107,36 @@ function ResumePage() {
       try {
         const errors = await formikRef.current.validateForm();
         if (Object.keys(errors).length > 0) {
-          throw new Error("Validation failed");
+          throw new Error();
         } else {
           try {
             await exportToPDF(
               resumeRef as React.RefObject<HTMLElement>,
               `${resumeData.name.replace(/\s+/g, "_")}_resume.pdf`
             );
-            alert("Resume exported successfully!");
           } catch {
-            alert(
-              "An error occurred while exporting the resume. Please try again."
-            );
+            throw new Error("An error occurred while exporting the resume. Please try again.");
           }
         }
       } catch {
-        alert("Please fix the validation errors before exporting.");
+        throw new Error("Please fix validation errors before exporting");
       }
     }
   }, [resumeData.name]);
 
   return (
-    <div className="flex flex-col h-screen">
-      <Header
-        onSave={handleSave}
-        onLoad={(data) => {
-          setResumeData(data);
-          updateHistory(data);
-        }}
-        onExport={handleExport}
-        resumeData={resumeData}
-      />
-      <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
+    <>
+      <div className="flex flex-col h-screen">
+        <Header
+          onSave={handleSave}
+          onLoad={(data) => {
+            setResumeData(data);
+            updateHistory(data);
+          }}
+          onExport={handleExport}
+          resumeData={resumeData}
+        />
+        <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
           <DragDropContext onDragEnd={handleDragEnd}>
             <Sidebar
               ref={formikRef}
@@ -150,8 +152,10 @@ function ResumePage() {
               template={activeTemplate}
             />
           </DragDropContext>
+        </div>
       </div>
-    </div>
+      <ToastContainer />
+    </>
   );
 }
 
