@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CheckCircleIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-toastify";
 import { TOAST_POSITION } from "../utils/constants";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,6 +9,7 @@ import {
   saveResume,
   uploadResumeJSON,
 } from "../utils/storage";
+import { useEditDetector } from "../hooks/useEditDetector";
 
 interface HeaderProps {
   onSave: () => void;
@@ -16,25 +18,64 @@ interface HeaderProps {
   resumeData: ResumeData;
 }
 
+type DebouncedFunction = (...args: unknown[]) => void;
+
 export default function Header({
   onSave,
   onLoad,
   onExport,
   resumeData,
 }: HeaderProps) {
-  const [isExporting, setIsExporting] = useState(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+  const hasEdited = useEditDetector();
+  const [autosaveStatus, setAutosaveStatus] = useState<
+    "idle" | "saving" | "saved"
+  >("idle");
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const autoSaveChanges = useCallback(async () => {
+    setAutosaveStatus("saving");
+    try {
+      await onSave();
+      setAutosaveStatus("saved");
+      setTimeout(() => setAutosaveStatus("idle"), 1500);
+    } catch {
+      setAutosaveStatus("idle");
+    }
+  }, [onSave]);
+
+  const debounce = (func: DebouncedFunction, delay: number) => {
+    return (...args: unknown[]) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => func(...args), delay);
+    };
+  };
+
+  const handleTyping = useCallback(debounce(autoSaveChanges, 2000), [
+    autoSaveChanges,
+  ]);
+
+  useEffect(() => {
+    if (hasEdited) {
+      setAutosaveStatus("saving");
+      handleTyping();
+    }
+  }, [resumeData, hasEdited, handleTyping]);
+
   const handleSave = async () => {
     try {
       await onSave();
       downloadResumeJSON(resumeData);
       toast.success("Resume saved as JSON successfully!", {
         position: TOAST_POSITION,
-        autoClose: 3000
+        autoClose: 3000,
       });
     } catch {
       toast.error("Please fix the validation errors before saving.", {
         position: TOAST_POSITION,
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
   };
@@ -45,7 +86,7 @@ export default function Header({
       await onExport();
       toast.success("Resume exported to PDF successfully!", {
         position: TOAST_POSITION,
-        autoClose: 3000
+        autoClose: 3000,
       });
     } catch (error) {
       toast.error(
@@ -66,12 +107,12 @@ export default function Header({
       navigator.clipboard.writeText(link);
       toast.success("Share link copied to clipboard!", {
         position: TOAST_POSITION,
-        autoClose: 3000
+        autoClose: 3000,
       });
     } catch {
       toast.error("Failed to copy share link. Please try again.", {
         position: TOAST_POSITION,
-        autoClose: 3000
+        autoClose: 3000,
       });
     }
   };
@@ -85,7 +126,7 @@ export default function Header({
         saveResume(data);
         toast.success("Resume loaded successfully!", {
           position: TOAST_POSITION,
-          autoClose: 3000
+          autoClose: 3000,
         });
       } catch (error) {
         toast.error(
@@ -104,6 +145,14 @@ export default function Header({
         <div className="container mx-auto flex flex-wrap items-center justify-between">
           <h1 className="text-2xl font-bold mb-2 sm:mb-0">QuickResume</h1>
           <div className="flex flex-wrap gap-2 sm:space-x-2 sm:gap-0">
+            <div className="text-sm text-gray-400 flex items-center space-x-2">
+              {autosaveStatus === "saving" && (
+                <ArrowPathIcon className="h-5 w-5 animate-spin" />
+              )}
+              {autosaveStatus === "saved" && (
+                <CheckCircleIcon className="h-5 w-5 " />
+              )}
+            </div>
             <button
               onClick={handleSave}
               className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full sm:w-auto"

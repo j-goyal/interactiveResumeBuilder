@@ -29,7 +29,7 @@ export default function SectionForm({
       />
       <button
         onClick={onRemove}
-        className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
+        className="removeSectionButton bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
       >
         Remove Section
       </button>

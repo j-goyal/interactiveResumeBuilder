@@ -1,7 +1,15 @@
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import { ResumeData, Section } from "../types";
 import SectionForm from "./SectionForm";
-import { Formik, Field, Form, ErrorMessage, FormikProps, FormikValues, FormikErrors } from "formik";
+import {
+  Formik,
+  Field,
+  Form,
+  ErrorMessage,
+  FormikProps,
+  FormikValues,
+  FormikErrors,
+} from "formik";
 import { resumeValidationSchema } from "@/app/utils/validationSchema";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 
@@ -14,7 +22,9 @@ interface SidebarProps {
 }
 
 interface FormikMethods {
-  validateForm: (values?: FormikErrors<FormikValues>) => Promise<FormikErrors<FormikValues>>;
+  validateForm: (
+    values?: FormikErrors<FormikValues>
+  ) => Promise<FormikErrors<FormikValues>>;
   submitForm: () => Promise<void>;
 }
 
@@ -48,7 +58,9 @@ const Sidebar = forwardRef(
     const formikRef = useRef<FormikProps<FormikValues>>(null);
 
     useImperativeHandle(ref, () => ({
-      validateForm: formikRef.current?.validateForm || (() => Promise.resolve<FormikErrors<FormikValues>>({})),
+      validateForm:
+        formikRef.current?.validateForm ||
+        (() => Promise.resolve<FormikErrors<FormikValues>>({})),
       submitForm: formikRef.current?.submitForm || (() => Promise.resolve()),
     }));
 
@@ -72,7 +84,9 @@ const Sidebar = forwardRef(
 
     return (
       <div className="w-full lg:w-1/3 bg-gray-100 p-4 overflow-y-auto h-screen lg:h-auto">
-        <h2 className="text-xl font-bold mb-4 text-gray-900">Resume Sections</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-900">
+          Resume Sections
+        </h2>
 
         {/* Template Selector */}
         <div className="mb-4">
@@ -180,6 +194,7 @@ const Sidebar = forwardRef(
 
         {/* Add Section Button */}
         <button
+          id="addSectionButton"
           onClick={handleAddSection}
           className="mt-4 w-full bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600"
         >

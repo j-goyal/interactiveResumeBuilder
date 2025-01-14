@@ -10,7 +10,7 @@ import { defaultResumeData } from "./utils/defaultData";
 import { saveResume, loadResume } from "./utils/storage";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { exportToPDF } from "./utils/pdfExport";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { FormikProps, FormikValues } from "formik";
 import { toast, ToastContainer } from "react-toastify";
 import { TOAST_POSITION } from "./utils/constants";
@@ -18,6 +18,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 function ResumePage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathName = usePathname();
   const formikRef = useRef<FormikProps<FormikValues>>(null);
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
   const [activeTemplate, setActiveTemplate] = useState("modern");
@@ -29,6 +31,7 @@ function ResumePage() {
     const resumedataParam = searchParams.get("resumedata");
     if (resumedataParam) {
       try {
+        router.replace(pathName);
         const decodedData = decodeURIComponent(atob(resumedataParam));
         const resumeParsedData = JSON.parse(decodedData);
         if (resumeParsedData) {
@@ -48,7 +51,7 @@ function ResumePage() {
         setHistory([savedData]);
       }
     }
-  }, [searchParams]);
+  }, [searchParams, pathName, router]);
 
   const handleSave = useCallback(async () => {
     if (formikRef.current) {
@@ -115,7 +118,9 @@ function ResumePage() {
               `${resumeData.name.replace(/\s+/g, "_")}_resume.pdf`
             );
           } catch {
-            throw new Error("An error occurred while exporting the resume. Please try again.");
+            throw new Error(
+              "An error occurred while exporting the resume. Please try again."
+            );
           }
         }
       } catch {
