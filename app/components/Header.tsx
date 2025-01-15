@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CheckCircleIcon, ArrowPathIcon } from "@heroicons/react/24/solid";
 import { toast } from "react-toastify";
 import { TOAST_POSITION } from "../utils/constants";
 import "react-toastify/dist/ReactToastify.css";
+import CloudDoneOutlinedIcon from '@mui/icons-material/CloudDoneOutlined';
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 import { ResumeData } from "../types";
 import {
   downloadResumeJSON,
@@ -27,7 +28,7 @@ export default function Header({
   resumeData,
 }: HeaderProps) {
   const [isExporting, setIsExporting] = useState<boolean>(false);
-  const hasEdited = useEditDetector();
+  const hasEdited = useEditDetector("mainSectionWithoutHeader");
   const [autosaveStatus, setAutosaveStatus] = useState<
     "idle" | "saving" | "saved"
   >("idle");
@@ -147,19 +148,19 @@ export default function Header({
           <div className="flex flex-wrap gap-2 sm:space-x-2 sm:gap-0">
             <div className="text-sm text-gray-400 flex items-center space-x-2">
               {autosaveStatus === "saving" && (
-                <ArrowPathIcon className="h-5 w-5 animate-spin" />
+                <AutorenewIcon className="animate-spin" />  
               )}
-              {autosaveStatus === "saved" && (
-                <CheckCircleIcon className="h-5 w-5 " />
+              {(autosaveStatus === "saved" || autosaveStatus === "idle") && (
+                <CloudDoneOutlinedIcon />
               )}
             </div>
             <button
               onClick={handleSave}
-              className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full sm:w-auto"
+              className="bg-blue-700 hover:bg-blue-500 px-4 py-2 rounded w-full sm:w-auto"
             >
               Save As JSON
             </button>
-            <label className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded w-full sm:w-auto text-center flex justify-center cursor-pointer">
+            <label className="bg-green-700 hover:bg-green-500 px-4 py-2 rounded w-full sm:w-auto text-center flex justify-center cursor-pointer">
               Load JSON
               <input
                 type="file"
@@ -173,14 +174,14 @@ export default function Header({
             </label>
             <button
               onClick={handleExport}
-              className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded w-full sm:w-auto"
+              className="bg-purple-700 hover:bg-purple-500 px-4 py-2 rounded w-full sm:w-auto"
               disabled={isExporting}
             >
               {isExporting ? "Exporting..." : "Export PDF"}
             </button>
             <button
               onClick={handleShare}
-              className="bg-yellow-500 hover:bg-yellow-600 px-4 py-2 rounded w-full sm:w-auto"
+              className="bg-yellow-700 hover:bg-yellow-500 px-4 py-2 rounded w-full sm:w-auto"
             >
               Share
             </button>

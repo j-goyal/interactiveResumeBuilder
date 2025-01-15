@@ -22,9 +22,9 @@ function ResumePage() {
   const pathName = usePathname();
   const formikRef = useRef<FormikProps<FormikValues>>(null);
   const [resumeData, setResumeData] = useState<ResumeData>(defaultResumeData);
-  const [activeTemplate, setActiveTemplate] = useState("modern");
+  const [activeTemplate, setActiveTemplate] = useState<string>("modern");
   const [history, setHistory] = useState<ResumeData[]>([defaultResumeData]);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
   const resumeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -141,7 +141,7 @@ function ResumePage() {
           onExport={handleExport}
           resumeData={resumeData}
         />
-        <div className="flex flex-1 flex-col lg:flex-row overflow-hidden">
+        <div id="mainSectionWithoutHeader" className="flex flex-1 flex-col lg:flex-row overflow-hidden">
           <DragDropContext onDragEnd={handleDragEnd}>
             <Sidebar
               ref={formikRef}

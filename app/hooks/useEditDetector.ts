@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 
-export const useEditDetector = () => {
+export const useEditDetector = (targetElementId: string) => {
   const [hasEdited, setHasEdited] = useState(false);
 
   const handleUserInput = () => setHasEdited(true);
+
+  useEffect(() => {
+    const targetElement = document.getElementById(targetElementId);
+    if (!targetElement) return;
+
+    targetElement.addEventListener("input", handleUserInput);
+
+    return () => {
+      targetElement.removeEventListener("input", handleUserInput);
+    };
+  }, [targetElementId]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,39 +27,30 @@ export const useEditDetector = () => {
   }, [hasEdited]);
 
   useEffect(() => {
-    document.addEventListener("input", handleUserInput);
-
-    return () => {
-      document.removeEventListener("input", handleUserInput);
-    };
-  }, []);
-
-  const handleSectionChange = () => {
-    setHasEdited(true);
-  };
-
-  useEffect(() => {
     const addButton = document.getElementById("addSectionButton");
 
     const attachRemoveButtonListeners = () => {
-      const removeButtons = document.querySelectorAll(".removeSectionButton");
+      const targetElement = document.getElementById(targetElementId);
+      if (!targetElement) return;
+
+      const removeButtons = targetElement.querySelectorAll(".removeSectionButton");
       removeButtons.forEach((button) => {
-        button.addEventListener("click", handleSectionChange);
+        button.addEventListener("click", handleUserInput);
       });
     };
 
     setTimeout(() => {
       attachRemoveButtonListeners();
       if (addButton) {
-        addButton.addEventListener("click", handleSectionChange);
+        addButton.addEventListener("click", handleUserInput);
       }
     }, 500);
 
     return () => {
       if (addButton)
-        addButton.removeEventListener("click", handleSectionChange);
+        addButton.removeEventListener("click", handleUserInput);
     };
-  }, []);
+  }, [targetElementId]);
 
   return hasEdited;
 };

@@ -94,6 +94,7 @@ const Sidebar = forwardRef(
             Template
           </label>
           <select
+            aria-label="template"
             value={activeTemplate}
             onChange={(e) => setActiveTemplate(e.target.value)}
             className="text-gray-900 mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
@@ -112,8 +113,8 @@ const Sidebar = forwardRef(
           onSubmit={(values) => onDataChange(values)}
           enableReinitialize
         >
-          {({ handleSubmit, values, handleChange }) => (
-            <Form onBlur={handleSubmit}>
+          {({ values, handleChange }) => (
+            <Form>
               <div className="mb-4  text-gray-900">
                 <h3 className="text-lg font-semibold mb-2">
                   Profile Information
